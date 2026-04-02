@@ -10,6 +10,8 @@ services:
       - "1883:1883"
     volumes:
       - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
     networks:
       - sensor_net
 
@@ -25,8 +27,10 @@ services:
     networks:
       - sensor_net
     depends_on:
-      - mosquitto
-      - influxdb
+      influxdb:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
 
   # 3. InfluxDB (Opslag en Visualisatie)
   influxdb:
@@ -39,10 +43,16 @@ services:
       - ./influxdb/data:/var/lib/influxdb2
     environment:
       - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=admin
-      - DOCKER_INFLUXDB_INIT_PASSWORD=adminpassword123
-      - DOCKER_INFLUXDB_INIT_ORG=school
-      - DOCKER_INFLUXDB_INIT_BUCKET=sensordata
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUX_USER}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUX_PASS}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUX_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUX_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUX_TOKEN}
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - sensor_net
 
@@ -52,18 +62,16 @@ services:
     container_name: portainer
     restart: unless-stopped
     ports:
-      - "9000:9000"
+      - "9443:9443"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock # Nodig om Docker te beheren
+      - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     networks:
       - sensor_net
 
-# Netwerk en Volumes declareren
 networks:
   sensor_net:
     driver: bridge
 
 volumes:
   portainer_data:
-

@@ -57,8 +57,8 @@
         "id": "11258eec805a5362",
         "type": "function",
         "z": "8ca92ed7e7db51ee",
-        "name": "function 1",
-        "func": "// 1. Maak van de tekst weer een object\nlet data = JSON.parse(msg.payload);\n\n// 2. Logica: We checken of de CO2 niet bizar hoog is (foutmeting)\nif (data.co2 > 5000) {\n    node.warn(\"Onrealistische CO2 waarde genegeerd!\");\n    return null;\n}\n\n// 3. Klaarmaken voor InfluxDB\nmsg.payload = {\n    temperatuur: data.temperatuur,\n    luchtvochtigheid: data.luchtvochtigheid,\n    co2: data.co2\n};\n\nreturn msg;",
+        "name": "Function",
+        "func": "// Payload object validation\nif (typeof msg.payload !== 'object') {\n    node.error(\"Payload is niet formaat: JSON Object\");\n    return null;\n}\n\n// Metadata extraction\nlet topicParts = msg.topic.split('/');\nlet sensorID = topicParts[topicParts.length - 1];\n\nlet d = msg.payload;\n\n// Data validation\nlet isValid = (\n    d.temperatuur >= -10 && d.temperatuur <= 32 &&\n    d.luchtvochtigheid >= 50 && d.luchtvochtigheid <= 90 &&\n    d.co2 >= 400 && d.co2 <= 500\n);\n\nif (!isValid) {\n    node.warn(`Invalid data in ${sensorID} gedropt...`);\n    return null;\n}\n\n// InfluxDB formatting\nmsg.payload = {\n    temperatuur: d.temperatuur,\n    luchtvochtigheid: d.luchtvochtigheid,\n    co2: d.co2\n};\n\nmsg.tags = {\n    device: sensorID\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -66,7 +66,7 @@
         "finalize": "",
         "libs": [],
         "x": 600,
-        "y": 200,
+        "y": 180,
         "wires": [
             [
                 "b203328b48724e61"
@@ -78,16 +78,16 @@
         "type": "mqtt in",
         "z": "8ca92ed7e7db51ee",
         "name": "",
-        "topic": "sensor/klimaat",
+        "topic": "sensor/BevDecSns/#",
         "qos": "2",
-        "datatype": "auto-detect",
+        "datatype": "json",
         "broker": "96b6e2d96a91453c",
         "nl": false,
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 390,
-        "y": 220,
+        "x": 560,
+        "y": 140,
         "wires": [
             [
                 "11258eec805a5362"
@@ -99,17 +99,17 @@
         "type": "influxdb out",
         "z": "8ca92ed7e7db51ee",
         "influxdb": "9c58fff33b4d2578",
-        "name": "Test",
-        "measurement": "",
+        "name": "InfluxDB",
+        "measurement": "sensor_data",
         "precision": "",
         "retentionPolicy": "",
         "database": "database",
         "precisionV18FluxV20": "ms",
         "retentionPolicyV18Flux": "",
         "org": "Vives",
-        "bucket": "Sensordata",
-        "x": 790,
-        "y": 180,
+        "bucket": "sensor_data",
+        "x": 600,
+        "y": 220,
         "wires": []
     }
 ]
