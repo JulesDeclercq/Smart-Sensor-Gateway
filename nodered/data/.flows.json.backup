@@ -58,7 +58,7 @@
         "type": "function",
         "z": "8ca92ed7e7db51ee",
         "name": "Function",
-        "func": "// Payload object validation\nif (typeof msg.payload !== 'object') {\n    node.error(\"Payload is niet formaat: JSON Object\");\n    return null;\n}\n\n// Metadata extraction\nlet topicParts = msg.topic.split('/');\nlet sensorID = topicParts[topicParts.length - 1]; // \"sensor_1\" of \"sensor_2\"\n\nlet d = msg.payload;\n\n// Data validation\nlet isValid = (\n    d.temperatuur >= -10 && d.temperatuur <= 32 &&\n    d.luchtvochtigheid >= 50 && d.luchtvochtigheid <= 90 &&\n    d.co2 >= 400 && d.co2 <= 500\n);\n\nif (!isValid) {\n    node.warn(`Invalid data in ${sensorID} gedropt...`);\n    return null;\n}\n\n// InfluxDB formatting\nmsg.payload = {\n    temperatuur: d.temperatuur,\n    luchtvochtigheid: d.luchtvochtigheid,\n    co2: d.co2\n};\n\nmsg.tags = {\n    device: sensorID\n};\n\nreturn msg;",
+        "func": "// Payload object validation\nif (typeof msg.payload !== 'object') {\n    node.error(\"Payload is niet formaat: JSON Object\");\n    return null;\n}\n\n// Metadata extraction\nlet topicParts = msg.topic.split('/');\nlet sensorID = topicParts[topicParts.length - 1];\n\nlet d = msg.payload;\n\n// Data validation\nlet isValid = (\n    d.temperatuur >= -10 && d.temperatuur <= 32 &&\n    d.luchtvochtigheid >= 50 && d.luchtvochtigheid <= 90 &&\n    d.co2 >= 400 && d.co2 <= 500\n);\n\nif (!isValid) {\n    node.warn(`Invalid data in ${sensorID} gedropt...`);\n    return null;\n}\n\n// InfluxDB formatting\nmsg.payload = {\n    temperatuur: d.temperatuur,\n    luchtvochtigheid: d.luchtvochtigheid,\n    co2: d.co2\n};\n\nmsg.tags = {\n    device: sensorID\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -69,7 +69,8 @@
         "y": 180,
         "wires": [
             [
-                "b203328b48724e61"
+                "b203328b48724e61",
+                "f5ed40d4fede348d"
             ]
         ]
     },
@@ -90,7 +91,8 @@
         "y": 140,
         "wires": [
             [
-                "11258eec805a5362"
+                "11258eec805a5362",
+                "0cc1bc224982fe56"
             ]
         ]
     },
@@ -109,6 +111,39 @@
         "org": "Vives",
         "bucket": "sensor_data",
         "x": 600,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "0cc1bc224982fe56",
+        "type": "debug",
+        "z": "8ca92ed7e7db51ee",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "f5ed40d4fede348d",
+        "type": "debug",
+        "z": "8ca92ed7e7db51ee",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
         "y": 220,
         "wires": []
     }
