@@ -1,0 +1,115 @@
+[
+    {
+        "id": "8ca92ed7e7db51ee",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "96b6e2d96a91453c",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "mqtt_broker",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "9c58fff33b4d2578",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "Influx",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://time_series_db:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "11258eec805a5362",
+        "type": "function",
+        "z": "8ca92ed7e7db51ee",
+        "name": "function 1",
+        "func": "// 1. Maak van de tekst weer een object\nlet data = JSON.parse(msg.payload);\n\n// 2. Logica: We checken of de CO2 niet bizar hoog is (foutmeting)\nif (data.co2 > 5000) {\n    node.warn(\"Onrealistische CO2 waarde genegeerd!\");\n    return null;\n}\n\n// 3. Klaarmaken voor InfluxDB\nmsg.payload = {\n    temperatuur: data.temperatuur,\n    luchtvochtigheid: data.luchtvochtigheid,\n    co2: data.co2\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 200,
+        "wires": [
+            [
+                "b203328b48724e61"
+            ]
+        ]
+    },
+    {
+        "id": "49d7f441b4678cef",
+        "type": "mqtt in",
+        "z": "8ca92ed7e7db51ee",
+        "name": "",
+        "topic": "sensor/klimaat",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "96b6e2d96a91453c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 390,
+        "y": 220,
+        "wires": [
+            [
+                "11258eec805a5362"
+            ]
+        ]
+    },
+    {
+        "id": "b203328b48724e61",
+        "type": "influxdb out",
+        "z": "8ca92ed7e7db51ee",
+        "influxdb": "9c58fff33b4d2578",
+        "name": "Test",
+        "measurement": "",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "Vives",
+        "bucket": "Sensordata",
+        "x": 790,
+        "y": 180,
+        "wires": []
+    }
+]
