@@ -4,6 +4,8 @@
     "version": "0.0.1",
     "private": true,
     "dependencies": {
+        "crypto-js": "^4.2.0",
+        "node-red-contrib-crypto-js": "~0.1.1",
         "node-red-contrib-influxdb": "~0.7.0"
     }
 }

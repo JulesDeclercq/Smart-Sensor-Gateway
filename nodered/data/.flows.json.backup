@@ -58,7 +58,7 @@
         "type": "function",
         "z": "8ca92ed7e7db51ee",
         "name": "Function",
-        "func": "// Payload object validation\nif (typeof msg.payload !== 'object') {\n    node.error(\"Payload is niet formaat: JSON Object\");\n    return null;\n}\n\n// Metadata extraction\nlet topicParts = msg.topic.split('/');\nlet sensorID = topicParts[topicParts.length - 1];\n\nlet d = msg.payload;\n\n// Data validation\nlet isValid = (\n    d.temperatuur >= -10 && d.temperatuur <= 32 &&\n    d.luchtvochtigheid >= 50 && d.luchtvochtigheid <= 90 &&\n    d.co2 >= 400 && d.co2 <= 500\n);\n\nif (!isValid) {\n    node.warn(`Invalid data in ${sensorID} gedropt...`);\n    return null;\n}\n\n// InfluxDB formatting\nmsg.payload = {\n    temperatuur: d.temperatuur,\n    luchtvochtigheid: d.luchtvochtigheid,\n    co2: d.co2\n};\n\nmsg.tags = {\n    device: sensorID\n};\n\nreturn msg;",
+        "func": "// ==========================================\n// 1. DATA ANALYSEREN & PARSEN\n// ==========================================\nlet data;\n\nif (typeof msg.payload === \"object\" && msg.payload !== null) {\n    data = msg.payload;\n} else {\n    try {\n        let rawText = msg.payload.toString().trim();\n        data = JSON.parse(rawText);\n    } catch (e) {\n        node.error(\"Payload is geen geldige JSON: \" + e.message);\n        return null;\n    }\n}\n\n// ==========================================\n// 2. METADATA EXTRAHEREN (Sensor ID)\n// ==========================================\nlet topicParts = msg.topic.split('/');\nlet sensorID = topicParts[topicParts.length - 1]; // Dit is \"sensor_1\" of \"sensor_2\"\n\n// ==========================================\n// 3. DYNAMISCHE FIELDS AANMAKEN\n// ==========================================\nif (data.hasOwnProperty('temperatuur')) {\n    \n    // We maken een leeg object voor de fields\n    let dynamicFields = {};\n\n    // We bouwen de veldnamen op: bijv. \"temperatuur_sensor_1\"\n    dynamicFields[\"temperatuur_\" + sensorID] = data.temperatuur;\n    dynamicFields[\"luchtvochtigheid_\" + sensorID] = data.luchtvochtigheid;\n    dynamicFields[\"co2_\" + sensorID] = data.co2;\n\n    msg.payload = dynamicFields;\n\n    // We behouden de tag voor de zekerheid (best practice)\n    msg.tags = {\n        device: sensorID\n    };\n\n    msg.measurement = \"BevDecSensors\";\n\n    return msg;\n} else {\n    node.warn(\"Meting genegeerd: ontbrekende velden.\");\n    return null;\n}",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -66,11 +66,11 @@
         "finalize": "",
         "libs": [],
         "x": 600,
-        "y": 180,
+        "y": 140,
         "wires": [
             [
                 "b203328b48724e61",
-                "f5ed40d4fede348d"
+                "396ef223160e19a2"
             ]
         ]
     },
@@ -81,18 +81,17 @@
         "name": "",
         "topic": "sensor/BevDecSns/#",
         "qos": "2",
-        "datatype": "json",
+        "datatype": "utf8",
         "broker": "96b6e2d96a91453c",
         "nl": false,
         "rap": true,
         "rh": 0,
         "inputs": 0,
         "x": 560,
-        "y": 140,
+        "y": 100,
         "wires": [
             [
-                "11258eec805a5362",
-                "0cc1bc224982fe56"
+                "11258eec805a5362"
             ]
         ]
     },
@@ -102,49 +101,33 @@
         "z": "8ca92ed7e7db51ee",
         "influxdb": "9c58fff33b4d2578",
         "name": "InfluxDB",
-        "measurement": "sensor_data",
+        "measurement": "",
         "precision": "",
         "retentionPolicy": "",
         "database": "database",
         "precisionV18FluxV20": "ms",
         "retentionPolicyV18Flux": "",
         "org": "Vives",
-        "bucket": "sensor_data",
+        "bucket": "Sensordata_V2",
         "x": 600,
-        "y": 220,
-        "wires": []
-    },
-    {
-        "id": "0cc1bc224982fe56",
-        "type": "debug",
-        "z": "8ca92ed7e7db51ee",
-        "name": "debug 1",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 800,
         "y": 180,
         "wires": []
     },
     {
-        "id": "f5ed40d4fede348d",
+        "id": "396ef223160e19a2",
         "type": "debug",
         "z": "8ca92ed7e7db51ee",
-        "name": "debug 2",
+        "name": "debug",
         "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "false",
+        "complete": "true",
+        "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 800,
-        "y": 220,
+        "x": 790,
+        "y": 160,
         "wires": []
     }
 ]

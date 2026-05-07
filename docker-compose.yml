@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 1. MQTT Broker (Sensor Communicatie)
+  # MQTT Broker (Sensor Communicatie)
   mosquitto:
     image: eclipse-mosquitto:latest
     container_name: mqtt_broker
@@ -15,8 +15,9 @@ services:
     networks:
       - sensor_net
 
-  # 2. Node-RED (Data Verwerking)
+  # Node-RED (Data Verwerking)
   nodered:
+    build: ./nodered
     image: nodered/node-red:latest
     container_name: node_red
     restart: unless-stopped
@@ -32,7 +33,7 @@ services:
       mosquitto:
         condition: service_started
 
-  # 3. InfluxDB (Opslag en Visualisatie)
+  # InfluxDB (Opslag en Visualisatie)
   influxdb:
     image: influxdb:2.7
     container_name: time_series_db
@@ -56,7 +57,7 @@ services:
     networks:
       - sensor_net
 
-  # 4. Portainer (Monitoring en Beheer)
+  # Portainer (Monitoring en Beheer)
   portainer:
     image: portainer/portainer-ce:latest
     container_name: portainer

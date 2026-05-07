@@ -540,6 +540,7 @@ module.exports = {
      *    global.get("os")
      */
     functionGlobalContext: {
+	CryptoJS: require('crypto-js')
         // os:require('os'),
     },
 
