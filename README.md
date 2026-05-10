@@ -5,9 +5,13 @@ Semesteropdracht Switching Routing Wireless Essentials.
 Gemaakt door Bram De Bevere en Jules Declercq.
 In opdracht van dhr M. Leroy.
 
-Focus van bijdragen:
-- Bram: Node-RED, InfluxDB, Grafana
-- Jules: Sensor script, MQTT, Back-ups
+## Reflectie
+Qua reflectie kan het kort en bondig gehouden geworden, geen nood aan een apart document hiervoor.
+Met dit project hebben we de skills en tools geleerd en leren gebruikendie nodig zijn voor de full development van een Docker Compose-stack.
+Hoewel onze bijdragen veelal door mekaar liepen, zouden we onze focussen als volgt opdelen:
+
+- Bram: Focus op Node-RED, InfluxDB, Grafana
+- Jules: Focus op Sensor script, MQTT, Back-ups
 
 ## Architectuur (dataflow)
 
