@@ -6,8 +6,8 @@ Gemaakt door Bram De Bevere en Jules Declercq.
 In opdracht van dhr M. Leroy.
 
 Focus van bijdragen:
-- Bram: MQTT, Node-RED, Grafana
-- Jules: Sensor script, InfluxDB, Back-ups
+- Bram: Node-RED, InfluxDB, Grafana
+- Jules: Sensor script, MQTT, Back-ups
 
 ## Architectuur (dataflow)
 
