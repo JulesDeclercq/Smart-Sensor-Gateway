@@ -70,6 +70,25 @@ services:
     networks:
       - sensor_net
 
+  # Grafana (Uitgebreide Visualisatie)
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "9001:3000"
+    networks:
+      - sensor_net
+
+  # Sensor (Automatisch opstarten)
+  sensor:
+    build: ./scripts
+    restart: always
+    depends_on:
+      - mosquitto
+    networks:
+      - sensor_net
+
 networks:
   sensor_net:
     driver: bridge

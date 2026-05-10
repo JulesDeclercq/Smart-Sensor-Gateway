@@ -4,7 +4,7 @@ import random
 import json
 
 # Config
-BROKER = "localhost"
+BROKER = "mosquitto"
 PORT = 1883
 TOPIC_1 = "sensor/BevDecSns/sensor_1"
 TOPIC_2 = "sensor/BevDecSns/sensor_2"

@@ -2,6 +2,7 @@ influxdb/data/
 nodered/node_modules/
 mosquitto/data/
 mosquitto/log/
+backups/
 
 .env
 *.log
