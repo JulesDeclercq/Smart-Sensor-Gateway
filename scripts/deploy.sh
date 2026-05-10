@@ -1,19 +1,31 @@
 #!/bin/bash
 
-echo "🚀 Start CI/CD Deployment: Smart Sensor Gateway..."
+# Verify folder
+cd ~/smart-sensor-gateway || { echo "Map niet gevonden!"; exit 1; }
 
-cd ~/smart-sensor-gateway
+echo " Start CI/CD Deployment: Smart Sensor Gateway..."
 
-echo "📦 Pulling latest images..."
-docker-compose pull
+# Fetch from Github
+echo " Fetching latest code from GitHub..."
+git pull origin main --rebase
 
-echo "🛑 Stopping and removing old containers..."
-docker-compose down
+# New images
+echo " Pulling latest images..."
+docker compose pull
 
-echo "🏗️ Starting new stack..."
-docker-compose up -d
+# Kill stack & orphans
+echo " Stopping and removing old containers..."
+docker compose down --remove-orphans
 
-echo "🧹 Cleaning up unused Docker images..."
+# Delete old containers
+docker rm -f grafana mqtt_broker portainer time_series_db sensor-sim 2>/dev/null || true
+
+# Restart stack
+echo " Starting new stack..."
+docker compose up -d --build
+
+# Cleanup
+echo " Cleaning up unused Docker images..."
 docker image prune -f
 
-echo "✅ Deployment successful! Run 'docker ps' to verify."
+echo " Deployment successful! Run 'docker ps' to verify."

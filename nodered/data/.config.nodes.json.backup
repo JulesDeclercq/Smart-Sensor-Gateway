@@ -448,5 +448,79 @@
                 "file": "/data/node_modules/node-red-contrib-influxdb/influxdb.js"
             }
         }
+    },
+    "node-red-contrib-crypto-js": {
+        "name": "node-red-contrib-crypto-js",
+        "version": "0.1.1",
+        "local": true,
+        "user": true,
+        "nodes": {
+            "encrypt": {
+                "name": "encrypt",
+                "types": [
+                    "encrypt"
+                ],
+                "enabled": true,
+                "local": true,
+                "user": false,
+                "module": "node-red-contrib-crypto-js",
+                "file": "/data/node_modules/node-red-contrib-crypto-js/cryptojs/encrypt.js"
+            },
+            "decrypt": {
+                "name": "decrypt",
+                "types": [
+                    "decrypt"
+                ],
+                "enabled": true,
+                "local": true,
+                "user": false,
+                "module": "node-red-contrib-crypto-js",
+                "file": "/data/node_modules/node-red-contrib-crypto-js/cryptojs/decrypt.js"
+            },
+            "hmac": {
+                "name": "hmac",
+                "types": [
+                    "hmac"
+                ],
+                "enabled": true,
+                "local": true,
+                "user": false,
+                "module": "node-red-contrib-crypto-js",
+                "file": "/data/node_modules/node-red-contrib-crypto-js/cryptojs/hmac.js"
+            },
+            "digest": {
+                "name": "digest",
+                "types": [
+                    "digest"
+                ],
+                "enabled": true,
+                "local": true,
+                "user": false,
+                "module": "node-red-contrib-crypto-js",
+                "file": "/data/node_modules/node-red-contrib-crypto-js/cryptojs/digest.js"
+            },
+            "encode": {
+                "name": "encode",
+                "types": [
+                    "encode"
+                ],
+                "enabled": true,
+                "local": true,
+                "user": false,
+                "module": "node-red-contrib-crypto-js",
+                "file": "/data/node_modules/node-red-contrib-crypto-js/cryptojs/encode.js"
+            },
+            "decode": {
+                "name": "decode",
+                "types": [
+                    "decode"
+                ],
+                "enabled": true,
+                "local": true,
+                "user": false,
+                "module": "node-red-contrib-crypto-js",
+                "file": "/data/node_modules/node-red-contrib-crypto-js/cryptojs/decode.js"
+            }
+        }
     }
 }
